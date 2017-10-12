@@ -24,6 +24,7 @@ def filter_partitions(partitions_list):
 
 FILTERD_PARTITION = filter_partitions(PARTITIONS)
 
+
 def tokenize_paragraphs(filter_partitions_list):
     """
     tokenize paragraphs by splitting them into words.
@@ -38,17 +39,19 @@ def tokenize_paragraphs(filter_partitions_list):
             for word in token:
                 if word:
                     word = ''.join(ch for ch in word if ch not in exclude)
-                    stem_tokens.append(word)
+                    stem_tokens.append(word.lower())
             tokens.append(stem_tokens)
     return tokens
 
 TOKENIZE_PARAGAPHS = tokenize_paragraphs(FILTERD_PARTITION)
+
 
 def generate_dictionary(tokenized_paragraphs):
     """Generate Dictionary based on tokenized paragraphs"""
     return gensim.corpora.Dictionary(tokenized_paragraphs)
 
 DICTONARY = generate_dictionary(TOKENIZE_PARAGAPHS)
+
 
 def filter_stopwords(dictionary):
     """Filter out all stopwords"""
@@ -69,6 +72,7 @@ def filter_stopwords(dictionary):
 
 DICTIONARY_FILTERD = filter_stopwords(DICTONARY)
 
+
 def map_to_bow(dictionary, tokenized_paragraphs):
     """ Map paragraphs into Bags-of-Words using a dictionary"""
     corpus = []
@@ -78,17 +82,20 @@ def map_to_bow(dictionary, tokenized_paragraphs):
 
 CORPUS = map_to_bow(DICTIONARY_FILTERD, TOKENIZE_PARAGAPHS)
 
+
 def build_tf_idf_model(corpus):
     """  Build TF-IDF model using corpus (list of paragraphs) from the previous part"""
     return gensim.models.TfidfModel(corpus)
 
 TFIDF_MODEL = build_tf_idf_model(CORPUS)
 
+
 def map_bow_to_tfidf_weights(tfidf_model, bow):
     """ Map Bags-of-Words into TF-IDF weights"""
     return [tfidf_model[b] for b in bow]
 
 TFIDF_CORPUS = map_bow_to_tfidf_weights(TFIDF_MODEL, CORPUS)
+
 
 def construct_matrix_similarity(corpus, tfidf_model):
     """
@@ -98,16 +105,7 @@ def construct_matrix_similarity(corpus, tfidf_model):
 
 MATRIX_SIMILARITY = construct_matrix_similarity(TFIDF_CORPUS, TFIDF_MODEL)
 
-"""
-3.4 Repeat the above procedure for LSI model using as an input the corpus with TF-IDF weights. Set
-number of topics to 100. In the end, each paragraph should be represented with a list of 100 pairs
-(topic-index, LSI-topic-weight) ). Some useful code:
-$ ... = gensim.models.LsiModel(tfidf_corpus, id2word=dictionary,
-num_topics=100)
-$ lsi_corpus = lsi_model[...]
-$ ... = gensim.similarities.MatrixSimilarity(...)
 
-"""
 def build_lsi_model(dictionary, corpus, num_topics):
     """ LSI model using as an input the corpus with TF-IDF weights. Set
     number of topics to 100. In the end, each paragraph should be represented
@@ -126,4 +124,5 @@ LSI_CORPUS = create_lsi_corpus(LSI_MODEL, TFIDF_CORPUS)
 
 LSI_MATRIX_SIMILARITY = construct_matrix_similarity(LSI_CORPUS, LSI_MODEL)
 
-print LSI_MODEL.show_topics(3)
+
+######################## PART 4 ################################
