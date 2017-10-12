@@ -14,7 +14,7 @@ def partitions(input_file, partion_factor):
     """partition file into paragraphs"""
     return input_file.read().split(partion_factor)
 
-PARTITIONS = partitions(F, "\n")
+PARTITIONS = partitions(F, "\n\n")
 STOPWORDS = partitions(codecs.open("common_words.txt", "r"), ",")
 
 
@@ -97,8 +97,6 @@ def construct_matrix_similarity(corpus, tfidf_model):
     return gensim.similarities.MatrixSimilarity(tfidf_model[corpus])
 
 MATRIX_SIMILARITY = construct_matrix_similarity(TFIDF_CORPUS, TFIDF_MODEL)
-print MATRIX_SIMILARITY
-
 
 """
 3.4 Repeat the above procedure for LSI model using as an input the corpus with TF-IDF weights. Set
@@ -111,7 +109,21 @@ $ ... = gensim.similarities.MatrixSimilarity(...)
 
 """
 def build_lsi_model(dictionary, corpus, num_topics):
-    """ lol """
-    return gensim.models.LsiModel(corpus, id2word=dictionary, num_topics=num_topics)
+    """ LSI model using as an input the corpus with TF-IDF weights. Set
+    number of topics to 100. In the end, each paragraph should be represented
+    with a list of 100 pairs (topic-index, LSI-topic-weight) ). """
+    lsi_model = gensim.models.LsiModel(corpus, id2word=dictionary, num_topics=num_topics)
+    return lsi_model
 
-print build_lsi_model(DICTONARY, TFIDF_CORPUS, 100)
+LSI_MODEL = build_lsi_model(DICTIONARY_FILTERD, TFIDF_CORPUS, 100)
+
+
+def create_lsi_corpus(model, corpus):
+    """ creatse lsi_corpus"""
+    return [model[b] for b in corpus]
+
+LSI_CORPUS = create_lsi_corpus(LSI_MODEL, TFIDF_CORPUS)
+
+LSI_MATRIX_SIMILARITY = construct_matrix_similarity(LSI_CORPUS, LSI_MODEL)
+
+print LSI_MODEL.show_topics(3)
