@@ -99,7 +99,9 @@ def map_to_bow(dictionary, tokenized_and_stemmed_paragraphs):
     return [dictionary.doc2bow(document) for document in tokenized_and_stemmed_paragraphs]
 
 CORPUS = map_to_bow(DICTIONARY_FILTERED, STEMMED_AND_TOKENIZED_PARAGRAPHS)
-
+print "corpus"
+print CORPUS
+print
 
 def build_tf_idf_model(corpus):
     """  Build TF-IDF model using corpus (list of paragraphs) from the previous part"""
@@ -150,11 +152,7 @@ LSI_MATRIX_SIMILARITY = construct_matrix_similarity(LSI_CORPUS)
 """
 Part 4 of assignment
 """
-from assignment import *
-
 queries = [["What is the function of money?"], ["How taxes influence Economics?"]]
-
-
 def preprocessing(query):
     """preprocessing
     :rtype: list
@@ -213,7 +211,7 @@ top_paragraphs = sorted(doc2similarity_lsi, key=lambda kv: -kv[1])[:3]
 for topic in lsi_topics:
     print
     print "Topic: " + str(topic[0]) + ", value: " + str(topic[1])
-    print unicode(LSI_MODEL.show_topic(topic[0]))
+    print LSI_MODEL.show_topic(topic[0])
 
 for pg in top_paragraphs:
     print
